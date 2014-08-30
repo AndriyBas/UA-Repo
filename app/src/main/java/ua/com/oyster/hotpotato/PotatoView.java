@@ -1,6 +1,9 @@
 package ua.com.oyster.hotpotato;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -29,12 +32,12 @@ public class PotatoView extends View {
         super.onDraw(canvas);
         canvas.drawRect(0, 0, this.getWidth(), this.getHeight(), backgrouPaint );
 
-        int color = 0x8f000000;
-        Paint paint = new Paint();
-        paint.setColor(color);
-        paint.setStyle(Paint.Style.FILL);
 
-        canvas.drawCircle(100, 100, 10, paint);
+        Resources res = this.getResources();
+        Bitmap bitmap = BitmapFactory.decodeResource(res, R.drawable.potato);
+
+        canvas.drawBitmap(bitmap, 300, 300, new Paint());
+
 
     }
 }
