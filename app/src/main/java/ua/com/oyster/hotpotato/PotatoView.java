@@ -2,9 +2,7 @@ package ua.com.oyster.hotpotato;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -34,9 +32,8 @@ public class PotatoView extends View {
     private int rotation = 0;
 
 
-    public PotatoView(Context context) {
+    public PotatoView(Context context, Bitmap bitmap) {
         super(context);
-
         mContext = context;
 
         backgrouPaint = new Paint();
@@ -49,12 +46,10 @@ public class PotatoView extends View {
         int height = metrics.heightPixels;
         mBorder = new Rect(0, 0, width + 300, height + 300);
 
-
-        Resources res = this.getResources();
-        Bitmap bitmap = BitmapFactory.decodeResource(res, R.drawable.potato);
         mPotato = new Potato(0, 0, bitmap);
         rotate();
     }
+
 
     private void rotate() {
         mDrawingThread = new Thread(new Runnable() {
@@ -169,5 +164,4 @@ public class PotatoView extends View {
                 }).start();
             }
     }
-
 }

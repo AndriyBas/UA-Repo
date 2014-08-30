@@ -40,4 +40,5 @@ public class Potato {
     public void setImage(Bitmap image) {
         this.image = image;
     }
+
 }

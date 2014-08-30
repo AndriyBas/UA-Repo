@@ -1,6 +1,8 @@
 package ua.com.oyster.hotpotato;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 /**
@@ -14,8 +16,10 @@ public class PotatoActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mPotatoView = new PotatoView(this);
+        final Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
+                R.drawable.potato);
+        mPotatoView = new PotatoView(this, bitmap);
         setContentView(mPotatoView);
-//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
+
 }
