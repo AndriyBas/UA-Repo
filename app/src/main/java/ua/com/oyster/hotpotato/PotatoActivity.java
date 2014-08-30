@@ -16,5 +16,6 @@ public class PotatoActivity extends Activity {
 
         mPotatoView = new PotatoView(this);
         setContentView(mPotatoView);
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 }
