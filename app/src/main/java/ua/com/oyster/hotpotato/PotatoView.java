@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,11 +18,14 @@ public class PotatoView extends View {
 
     private Paint backgrouPaint;
     private Potato mPotato;
+    private Thread mDrawingThread;
 
-    private int downX, downY, upX, upY;
+    private int downX, downY, upX, upY, dX, dY, directionX, directionY;
+    Matrix matrix = new Matrix();
 
     //This is huck!!
     private int startFlag = 0;
+    private int rotation = 5;
 
 
     public PotatoView(Context context) {
@@ -35,8 +39,33 @@ public class PotatoView extends View {
         Resources res = this.getResources();
         Bitmap bitmap = BitmapFactory.decodeResource(res, R.drawable.potato);
         mPotato = new Potato(0, 0, bitmap);
+        rotate();
+    }
 
-        invalidate();
+    private void rotate() {
+        mDrawingThread = new Thread(new Runnable() {
+            public void run() {
+                while (!Thread.currentThread().isInterrupted()) {
+
+
+                    try {
+                        Thread.sleep(10);
+                        PotatoView.this.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mPotato.setX(mPotato.getX() + directionX);
+                                mPotato.setY(mPotato.getY() + directionY);
+                                invalidate();
+                            }
+                        });
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        mDrawingThread.start();
     }
 
 
@@ -51,9 +80,19 @@ public class PotatoView extends View {
             mPotato.setX(this.getWidth() / 3);
             mPotato.setY(this.getHeight() / 3);
             startFlag = 1;
+
         }
 
-        canvas.drawBitmap(mPotato.getImage(), mPotato.getX(), mPotato.getY(), new Paint());
+        matrix.postTranslate(-mPotato.getImage().getWidth() / 2, -mPotato.getImage().getHeight() / 2);
+        matrix.postRotate(rotation);
+        rotation += 3;
+        matrix.postTranslate(mPotato.getX() - mPotato.getImage().getWidth() / 2,
+                mPotato.getY() - mPotato.getImage().getHeight() / 2);
+        canvas.drawBitmap(mPotato.getImage(), matrix, null);
+        matrix.reset();
+
+//        canvas.drawBitmap(mPotato.getImage(), mPotato.getX() - mPotato.getImage().getWidth()  / 2,
+//                mPotato.getY() - mPotato.getImage().getHeight() / 2, null);
     }
 
 
@@ -66,38 +105,60 @@ public class PotatoView extends View {
         }
 
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            mPotato.setX((int) event.getX() - 180);
-            mPotato.setY((int) event.getY() - 180);
-
-//            downX = (int) event.getX();
-//            downY = (int) event.getY();
+            //Attentoin! HardCode detected!
+            mPotato.setX((int) event.getX() + 200);
+            mPotato.setY((int) event.getY() + 200);
         }
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
             upX = (int) event.getX();
             upY = (int) event.getY();
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (potatoOnMap()) {
-                        try {
-                            Thread.sleep(10);
-                            PotatoView.this.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mPotato.setX(mPotato.getX() + (upX - downX) / 10);
-                                    mPotato.setY(mPotato.getY() + (upY - downY) / 10);
-                                    invalidate();
-                                }
-                            });
+            dX = upX - downX;
+            dY = upY - downY;
 
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+            if (dX > 0) {
+                if (dY > 0) {
+                    directionX = 10;
+                    directionY = 10;
+                } else {
+                    directionX = 10;
+                    directionY = -10;
                 }
-            }).start();
+            } else {
+                if (dY > 0) {
+                    directionX = -10;
+                    directionY = 10;
+                } else {
+                    directionX = -10;
+                    directionY = -10;
+                }
+            }
+
+//
+//            if (Math.abs(downX - upX) > 100 || Math.abs(downY - upY) > 100) {
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        while (potatoOnMap()) {
+//                            try {
+//                                Thread.sleep(100);
+//                                PotatoView.this.post(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        mPotato.setX(mPotato.getX() + directionX);
+//                                        mPotato.setY(mPotato.getY() + directionY);
+//                                        invalidate();
+//                                    }
+//                                });
+//
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    }
+//                }).start();
+//            }
 
 
         }
