@@ -32,12 +32,13 @@ public class PotatoView extends View {
     private int rotation = 0;
 
 
+
     public PotatoView(Context context, Bitmap bitmap) {
         super(context);
         mContext = context;
 
         backgrouPaint = new Paint();
-        backgrouPaint.setColor(Color.WHITE);
+        backgrouPaint.setColor(Color.DKGRAY);
         backgrouPaint.setStyle(Paint.Style.FILL);
 
 
@@ -104,7 +105,7 @@ public class PotatoView extends View {
     }
 
 
-    @Override
+  @Override
     public boolean onTouchEvent(MotionEvent event) {
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
